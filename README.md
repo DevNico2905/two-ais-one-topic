@@ -86,8 +86,8 @@ Aplicación interactiva con navegación por pestañas:
 No requiere instalación ni servidor. Solo descarga los archivos y abre `index.html` en tu navegador:
 
 ```bash
-git clone https://github.com/tu-usuario/nombre-del-repo.git
-cd nombre-del-repo
+git clone https://github.com/DevNico2905/two-ais-one-topic.git
+cd two-ais-one-topic
 # Abre index.html en tu navegador
 ```
 
