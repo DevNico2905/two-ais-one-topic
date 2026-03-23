@@ -76,8 +76,7 @@ Aplicación interactiva con navegación por pestañas:
 
 ## 🚀 Ver en vivo
 
-🌐 **[Ver proyecto desplegado →](#)**
-*(genai.nick-bern.com)*
+🌐 **[Ver proyecto desplegado → genai.nick-bern.com](https://genai.nick-bern.com)**
 
 ---
 
