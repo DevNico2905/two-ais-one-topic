@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Generativa — Nicolás Bernal Rodriguez</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple:  #534AB7;
+    --purple-l:#EEEDFE;
+    --purple-d:#26215C;
+    --teal:    #0F6E56;
+    --teal-l:  #E1F5EE;
+    --amber:   #854F0B;
+    --amber-l: #FAEEDA;
+    --coral:   #993C1D;
+    --coral-l: #FAECE7;
+    --blue:    #185FA5;
+    --blue-l:  #E6F1FB;
+    --green:   #3B6D11;
+    --green-l: #EAF3DE;
+    --ink:     #16150f;
+    --mist:    #f5f3ee;
+    --sand:    #e8e4db;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--mist);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── ANIMATED BACKGROUND BLOBS ── */
+  .bg-blobs {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  }
+  .blob {
+    position: absolute; border-radius: 50%;
+    opacity: 0.18; filter: blur(80px);
+    animation: float linear infinite;
+  }
+  .blob-1 { width: 560px; height: 560px; background: #534AB7; top: -120px; left: -160px; animation-duration: 22s; }
+  .blob-2 { width: 400px; height: 400px; background: #0F6E56; bottom: -80px; right: -100px; animation-duration: 28s; animation-delay: -8s; }
+  .blob-3 { width: 300px; height: 300px; background: #EF9F27; top: 40%; left: 55%; animation-duration: 18s; animation-delay: -4s; }
+
+  @keyframes float {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%      { transform: translate(30px,-40px) scale(1.05); }
+    66%      { transform: translate(-20px,30px) scale(0.97); }
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    position: relative; z-index: 1;
+    max-width: 900px; margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 64px 0 0;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+
+  .author-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; border: 1px solid var(--sand);
+    border-radius: 40px; padding: 6px 16px 6px 8px;
+    font-size: 13px; color: #555; font-weight: 500;
+    margin-bottom: 32px;
+    animation: fadeUp .6s ease both;
+  }
+  .author-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--purple); display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 700; color: white; font-size: 11px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+    color: var(--ink);
+    animation: fadeUp .7s .1s ease both;
+  }
+  h1 em { font-style: normal; color: var(--purple); }
+
+  .subtitle {
+    margin-top: 20px;
+    font-size: 17px; font-weight: 300; color: #666; line-height: 1.65;
+    max-width: 560px;
+    animation: fadeUp .7s .2s ease both;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--sand), transparent);
+    margin: 48px 0;
+    animation: fadeUp .5s .3s ease both;
+  }
+
+  /* ── REQUERIMIENTOS ── */
+  .req-section {
+    animation: fadeUp .7s .35s ease both;
+  }
+  .req-label {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: #999;
+    margin-bottom: 16px;
+  }
+  .req-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+  }
+  .req-item {
+    background: white; border: 1px solid var(--sand);
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .req-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
+  }
+  .req-item p { font-size: 13px; color: #444; line-height: 1.5; }
+  .req-item strong { font-weight: 500; color: var(--ink); display: block; margin-bottom: 2px; font-size: 13px; }
+
+  /* ── CTA SECTION ── */
+  .cta-label {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: #999;
+    margin-bottom: 16px;
+    animation: fadeUp .6s .5s ease both;
+  }
+
+  .cards-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    animation: fadeUp .7s .55s ease both;
+  }
+
+  .work-card {
+    position: relative; overflow: hidden;
+    border-radius: 20px; padding: 28px;
+    text-decoration: none; color: inherit;
+    border: 1.5px solid transparent;
+    transition: transform .25s ease, box-shadow .25s ease;
+    cursor: pointer;
+  }
+  .work-card:hover { transform: translateY(-4px); }
+
+  .work-card.claude {
+    background: #534AB7;
+    box-shadow: 0 8px 40px rgba(83,74,183,0.25);
+  }
+  .work-card.claude:hover { box-shadow: 0 16px 56px rgba(83,74,183,0.38); }
+
+  .work-card.other {
+    background: #1e3a5f;
+    box-shadow: 0 8px 40px rgba(24,95,165,0.22);
+  }
+  .work-card.other:hover { box-shadow: 0 16px 56px rgba(24,95,165,0.35); }
+
+  /* card decoration */
+  .work-card::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+  .work-card::after {
+    content: '';
+    position: absolute; bottom: -40px; left: -40px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .claude .card-badge  { background: rgba(255,255,255,0.15); color: #CECBF6; }
+  .other  .card-badge  { background: rgba(255,255,255,0.15); color: #B5D4F4; }
+
+  .card-ai-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700; color: white;
+    margin-bottom: 6px; line-height: 1.1;
+  }
+  .card-desc {
+    font-size: 13px; font-weight: 300; line-height: 1.55;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+  }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+  .card-tag {
+    font-size: 10px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+  }
+
+  .card-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; border-radius: 40px;
+    padding: 10px 20px;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+    text-decoration: none;
+    transition: gap .2s;
+  }
+  .claude .card-btn { color: var(--purple); }
+  .other  .card-btn { color: #0C447C; }
+  .work-card:hover .card-btn { gap: 12px; }
+
+  .card-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 64px; text-align: center;
+    font-size: 12px; color: #aaa;
+    animation: fadeUp .6s .7s ease both;
+  }
+  footer strong { color: #888; font-weight: 500; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 580px) {
+    .req-grid  { grid-template-columns: 1fr; }
+    .cards-row { grid-template-columns: 1fr; }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="container">
+
+  <header>
+    <div class="author-chip">
+      <div class="author-avatar">NB</div>
+      Nicolás Bernal Rodriguez
+    </div>
+
+    <h1>Infografía:<br><em>IA Generativa</em></h1>
+
+    <p class="subtitle">
+      Visualización estructurada de los conceptos fundamentales de la inteligencia artificial generativa — elaborada con apoyo de dos herramientas de IA distintas.
+    </p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- REQUERIMIENTOS -->
+  <div class="req-section">
+    <div class="req-label">Aspectos clave del trabajo</div>
+    <div class="req-grid">
+      <div class="req-item">
+        <div class="req-dot" style="background:#534AB7"></div>
+        <div>
+          <strong>Conceptos clave</strong>
+          <p>LLMs, tokens, embeddings, transformers, prompt engineering y RAG</p>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-dot" style="background:#0F6E56"></div>
+        <div>
+          <strong>Funcionamiento de la IA generativa</strong>
+          <p>Flujo desde datos de entrenamiento hasta generación de contenido</p>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-dot" style="background:#BA7517"></div>
+        <div>
+          <strong>Ejemplos prácticos y reales</strong>
+          <p>Asistentes, código, imágenes, medicina, atención al cliente y video</p>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-dot" style="background:#185FA5"></div>
+        <div>
+          <strong>Servicios AWS de IA generativa</strong>
+          <p>Bedrock, SageMaker, Amazon Q, Kendra, Titan y Trainium</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <div class="cta-label">Explorar los dos trabajos</div>
+
+  <div class="cards-row">
+
+    <!-- CLAUDE -->
+    <a href="claude.html" class="work-card claude">
+      <span class="card-badge">Versión 01</span>
+      <div class="card-ai-label">Claude<br>by Anthropic</div>
+      <p class="card-desc">Infografía visual estática con diseño por secciones, KPIs destacados, diagramas SVG y paleta de colores por categoría.</p>
+      <div class="card-tags">
+        <span class="card-tag">HTML</span>
+        <span class="card-tag">SVG</span>
+        <span class="card-tag">CSS</span>
+        <span class="card-tag">Infografía</span>
+      </div>
+      <span class="card-btn">
+        Ver infografía
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+
+    <!-- GEMINI -->
+    <a href="gemini.html" class="work-card other">
+      <span class="card-badge">Versión 02</span>
+      <div class="card-ai-label">Gemini<br>By Google</div>
+      <p class="card-desc">Aplicación interactiva con navegación por pestañas, contenido dinámico y componentes React adaptados a HTML puro.</p>
+      <div class="card-tags">
+        <span class="card-tag">React → HTML</span>
+        <span class="card-tag">Tailwind</span>
+        <span class="card-tag">Interactivo</span>
+      </div>
+      <span class="card-btn">
+        Ver infografía
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+
+  </div>
+
+  <footer>
+    <p>Trabajo académico · <strong>Nicolás Bernal Rodriguez</strong> · Inteligencia Artificial Generativa</p>
+    <p style="margin-top:6px">Elaborado con Claude (Anthropic) y Gemini (Google) como segunda herramienta de IA</p>
+  </footer>
+
+</div>
+</body>
+</html>

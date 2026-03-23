@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Generativa — App Interactiva</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+  body { font-family: 'DM Sans', sans-serif; }
+  .tab-content { animation: fadeSlide .3s ease both; }
+  @keyframes fadeSlide {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .back-btn {
+    position: fixed; top: 16px; left: 16px; z-index: 50;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; border: 1px solid #e5e7eb;
+    border-radius: 40px; padding: 7px 14px;
+    font-size: 13px; font-weight: 500; color: #4338ca;
+    text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow .2s;
+  }
+  .back-btn:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+</style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+
+<a href="index.html" class="back-btn">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M7 12L2 7l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Volver
+</a>
+
+<div class="p-4 md:p-8 pt-16 md:pt-12">
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <header class="bg-indigo-900 text-white p-8 rounded-t-3xl shadow-xl">
+    <h1 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight">Infografía: IA Generativa</h1>
+    <p class="text-indigo-200 text-lg">Guía esencial de conceptos, historia y ecosistema AWS</p>
+  </header>
+
+  <!-- Nav -->
+  <nav class="flex flex-wrap bg-white border-b border-gray-200 sticky top-0 z-10" id="nav">
+    <button onclick="setTab('conceptos')"    class="tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 border-indigo-600 text-indigo-600 bg-indigo-50" data-tab="conceptos">
+      <svg class="w-5 h-5 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      Conceptos Fundamentales
+    </button>
+    <button onclick="setTab('historia')"    class="tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-500 hover:text-indigo-500" data-tab="historia">
+      <svg class="w-5 h-5 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Hitos Históricos
+    </button>
+    <button onclick="setTab('funcionamiento')" class="tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-500 hover:text-indigo-500" data-tab="funcionamiento">
+      <svg class="w-5 h-5 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      ¿Cómo funciona?
+    </button>
+    <button onclick="setTab('aws')" class="tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-500 hover:text-indigo-500" data-tab="aws">
+      <svg class="w-5 h-5 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+      Servicios AWS GenAI
+    </button>
+    <button onclick="setTab('ejemplos')" class="tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 border-transparent text-gray-500 hover:text-indigo-500" data-tab="ejemplos">
+      <svg class="w-5 h-5 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+      Ejemplos Prácticos
+    </button>
+  </nav>
+
+  <!-- Content -->
+  <main class="bg-white p-6 md:p-10 rounded-b-3xl shadow-lg">
+    <div class="flex items-center gap-3 mb-6" id="section-header">
+      <div class="bg-indigo-600 p-2 rounded-lg text-white" id="section-icon">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800" id="section-title">Conceptos Fundamentales</h2>
+    </div>
+    <div id="tab-content" class="tab-content"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-indigo-100 p-4 rounded-2xl flex items-center gap-4">
+      <div class="bg-white p-2 rounded-full flex-shrink-0">
+        <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-xs text-indigo-900 leading-tight">
+        <strong>Nota Técnica:</strong> La IA generativa utiliza "Arquitecturas de Atención" para ponderar la importancia de diferentes partes de la entrada de datos.
+      </p>
+    </div>
+    <div class="bg-orange-100 p-4 rounded-2xl flex items-center gap-4">
+      <div class="bg-white p-2 rounded-full flex-shrink-0">
+        <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <p class="text-xs text-orange-900 leading-tight">
+        <strong>AWS Tip:</strong> Con Amazon Bedrock, tus datos corporativos permanecen privados y nunca se usan para entrenar los modelos base públicos.
+      </p>
+    </div>
+  </footer>
+
+</div>
+</div>
+
+<script>
+const tabs = {
+  conceptos: {
+    title: 'Conceptos Fundamentales',
+    icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`,
+    html: `
+      <div class="space-y-4">
+        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+          <h3 class="font-bold text-blue-800 text-lg">¿Qué es la IA Generativa?</h3>
+          <p class="text-gray-700">Es una rama de la inteligencia artificial capaz de crear contenido nuevo y original (texto, imágenes, audio, código) a partir de patrones aprendidos de datos existentes.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <h4 class="font-bold text-indigo-600">Modelos Fundacionales (FM)</h4>
+            <p class="text-sm text-gray-600">Modelos masivos entrenados en conjuntos de datos gigantescos que pueden adaptarse a múltiples tareas sin necesidad de reentrenamiento completo.</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <h4 class="font-bold text-indigo-600">LLMs</h4>
+            <p class="text-sm text-gray-600">Modelos de Lenguaje de Gran Tamaño especializados en procesar y generar texto con una coherencia casi humana.</p>
+          </div>
+        </div>
+      </div>`
+  },
+  historia: {
+    title: 'Hitos Históricos',
+    icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    html: `
+      <div class="relative border-l-2 border-indigo-200 ml-4 pl-6 space-y-6">
+        <div class="relative">
+          <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-2 border-white"></span>
+          <h4 class="font-bold">1950 — Test de Turing</h4>
+          <p class="text-sm text-gray-600">Alan Turing propone la pregunta: "¿Pueden las máquinas pensar?".</p>
+        </div>
+        <div class="relative">
+          <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-2 border-white"></span>
+          <h4 class="font-bold">2017 — Redes Transformer</h4>
+          <p class="text-sm text-gray-600">Google publica "Attention Is All You Need", permitiendo el procesamiento paralelo de datos.</p>
+        </div>
+        <div class="relative">
+          <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-2 border-white"></span>
+          <h4 class="font-bold">2022/2023 — Explosión GenAI</h4>
+          <p class="text-sm text-gray-600">Lanzamiento masivo de ChatGPT, DALL-E y la democratización de la IA.</p>
+        </div>
+      </div>`
+  },
+  funcionamiento: {
+    title: '¿Cómo funciona?',
+    icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
+    html: `
+      <div class="space-y-4">
+        <p class="text-gray-700 italic">"No es una base de datos, es un motor de predicción probabilística."</p>
+        <div class="flex flex-col space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-full font-bold text-xs flex-shrink-0">1</div>
+            <div><h4 class="font-semibold">Entrenamiento</h4><p class="text-sm text-gray-600">Ingesta de billones de parámetros para aprender estructuras estadísticas.</p></div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-full font-bold text-xs flex-shrink-0">2</div>
+            <div><h4 class="font-semibold">Inferencia y Prompts</h4><p class="text-sm text-gray-600">El usuario envía una instrucción y el modelo predice el siguiente elemento lógico.</p></div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-full font-bold text-xs flex-shrink-0">3</div>
+            <div><h4 class="font-semibold">Ajuste Fino (Fine-tuning)</h4><p class="text-sm text-gray-600">Personalización del modelo con datos específicos de una empresa para mejorar precisión.</p></div>
+          </div>
+        </div>
+      </div>`
+  },
+  aws: {
+    title: 'Servicios AWS GenAI',
+    icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>`,
+    html: `
+      <div class="grid grid-cols-1 gap-4">
+        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="text-orange-600 w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <h4 class="font-bold text-orange-800">Amazon Bedrock</h4>
+          </div>
+          <p class="text-sm text-gray-700">La forma más fácil de construir aplicaciones con FMs a través de una API. Permite elegir entre modelos de Amazon (Titan), Anthropic, Meta y más.</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="text-blue-600 w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+            <h4 class="font-bold text-blue-800">Amazon SageMaker JumpStart</h4>
+          </div>
+          <p class="text-sm text-gray-700">Para usuarios que necesitan control total sobre el entrenamiento y despliegue de modelos propios.</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="text-green-600 w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <h4 class="font-bold text-green-800">Guardrails for Bedrock</h4>
+          </div>
+          <p class="text-sm text-gray-700">Implementa políticas de IA responsable para filtrar contenido dañino y alucinaciones.</p>
+        </div>
+      </div>`
+  },
+  ejemplos: {
+    title: 'Ejemplos Prácticos',
+    icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>`,
+    html: `
+      <ul class="space-y-3">
+        <li class="flex gap-2">
+          <svg class="text-indigo-500 w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <p class="text-sm"><span class="font-bold">Atención al Cliente:</span> Chatbots inteligentes que entienden contexto emocional y resuelven dudas complejas.</p>
+        </li>
+        <li class="flex gap-2">
+          <svg class="text-indigo-500 w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <p class="text-sm"><span class="font-bold">Salud:</span> Aceleración en el descubrimiento de fármacos simulando plegamiento de proteínas.</p>
+        </li>
+        <li class="flex gap-2">
+          <svg class="text-indigo-500 w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <p class="text-sm"><span class="font-bold">Marketing:</span> Generación de imágenes publicitarias personalizadas y redacción de copys en segundos.</p>
+        </li>
+        <li class="flex gap-2">
+          <svg class="text-indigo-500 w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <p class="text-sm"><span class="font-bold">Desarrollo de software:</span> Asistentes de código como GitHub Copilot que aceleran la programación.</p>
+        </li>
+      </ul>`
+  }
+};
+
+function setTab(key) {
+  const t = tabs[key];
+  document.getElementById('section-title').textContent = t.title;
+  document.getElementById('section-icon').innerHTML = t.icon;
+  const content = document.getElementById('tab-content');
+  content.style.animation = 'none';
+  content.offsetHeight;
+  content.style.animation = '';
+  content.innerHTML = t.html;
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const active = btn.dataset.tab === key;
+    btn.className = `tab-btn flex-1 py-4 px-2 text-sm font-bold transition-all flex items-center justify-center gap-2 border-b-2 ${
+      active
+        ? 'border-indigo-600 text-indigo-600 bg-indigo-50'
+        : 'border-transparent text-gray-500 hover:text-indigo-500 hover:bg-gray-50'
+    }`;
+  });
+}
+
+setTab('conceptos');
+</script>
+</body>
+</html>
